@@ -1,4 +1,5 @@
 var io = require("socket.io-client/socket.io");
+var ignore = require("can-wait/ignore");
 
 // In the server socket.io-client/socket.io is mapped to @empty
 // so we'll stub it as minimally as possible.
@@ -10,6 +11,8 @@ if(typeof io !== "function") {
 			off: noop
 		};
 	};
+} else {
+	io = ignore(io);
 }
 
 module.exports = io;
