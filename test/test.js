@@ -1,6 +1,6 @@
 var io = require("steal-socket.io");
 var QUnit = require("steal-qunit");
-var wait = require("can-wait");
+var Zone = require("can-zone");
 
 QUnit.module("basics");
 
@@ -9,7 +9,7 @@ QUnit.test("io is a function", function(){
 });
 
 QUnit.test("works with can-wait", function(){
-	wait(function(){
+	new Zone().run(function(){
 		setTimeout(function(){
 			var socket = io("http://chat.donejs.com");
 
