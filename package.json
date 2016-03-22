@@ -26,7 +26,7 @@
     "testee": "^0.2.1"
   },
   "dependencies": {
-    "can-wait": "^0.2.5",
+    "can-zone": "^0.4.5",
     "socket.io-client": "^1.3.7"
   },
   "system": {
@@ -51,7 +51,7 @@
     "npmDependencies": [
       "socket.io-client",
       "steal-qunit",
-      "can-wait"
+      "can-zone"
     ]
   }
 }
