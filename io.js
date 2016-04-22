@@ -1,5 +1,5 @@
 var io = require("socket.io-client/socket.io");
-var Zone = require("can-zone");
+var ignore = require("./ignore");
 
 // In the server socket.io-client/socket.io is mapped to @empty
 // so we'll stub it as minimally as possible.
@@ -12,7 +12,7 @@ if(typeof io !== "function") {
 		};
 	};
 } else {
-	io = Zone.ignore(io);
+	io = ignore(io);
 }
 
 module.exports = io;
