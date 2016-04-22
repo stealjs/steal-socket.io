@@ -8,7 +8,7 @@ QUnit.test("io is a function", function(){
 	QUnit.equal(typeof io, "function", "io is a function");
 });
 
-QUnit.test("works with can-wait", function(){
+QUnit.test("works with can-zone", function(){
 	new Zone().run(function(){
 		setTimeout(function(){
 			var socket = io("http://chat.donejs.com");
