@@ -8,6 +8,7 @@ if(typeof io !== "function") {
 	io = function(){
 		return {
 			on: noop,
+			once: noop,
 			off: noop
 		};
 	};
