@@ -4,6 +4,6 @@ module.exports = function(io){
 		   typeof Zone.ignore === "function") {
 			return Zone.ignore(io).apply(this, arguments);
 		}
-		return io.apply(this. arguments);
+		return io.apply(this, arguments);
 	}
 };
