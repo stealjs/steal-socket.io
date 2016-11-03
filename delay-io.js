@@ -15,30 +15,21 @@ var realSocket;
 /**
  * A proxy for socket method calls, so that we could record early calls to `fifo` and replay them after.
  * @param io
- * @returns {{on: on, emit: emit}}
+ * @returns {{on: function, emit: function, ...}}
  */
 var delayedSocket = function(io){
-	return {
-		// TODO: all methods are treated the same way, so do some meta programming here.
-		on: function(){
+	return ['on', 'off', 'once', 'emit'].reduce(function(acc, method){
+		acc[method] = function(){
 			if (realSocket){
-				console.log('delay-io: realSocket on');
-				realSocket.on.apply(realSocket, arguments);
+				console.log('delay-io: realSocket ' + method);
+				realSocket[method].apply(realSocket, arguments);
 			} else {
-				console.log('delay-io: fifo on');
-				fifo.push(['on', arguments]);
+				console.log('delay-io: fifo ' + method);
+				fifo.push([method, arguments]);
 			}
-		},
-		emit: function(){
-			if (realSocket){
-				console.log('delay-io: realSocket emit');
-				realSocket.emit.apply(realSocket, arguments);
-			} else {
-				console.log('delay-io: fifo emit');
-				fifo.push(['emit', arguments]);
-			}
-		}
-	}
+		};
+		return acc;
+	}, {});
 };
 
 /**
