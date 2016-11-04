@@ -1,13 +1,27 @@
-var DEBUG;
+var DEBUG = false;
 
 /**
  * `fifoSockets` contains FIFO and a placeholder for `realSocket` per URL.
  * A FIFO is a storage for calls to io.Socket to be replayed when steal is done and we can  create a real socket.
  * The first element will be io and its arguments so that we could create a real socket later.
  * ```
- *   var socket = io('localhost');
- *   socket.on('messages', function(){...})
- *   socket.emit('hello', {});
+ *   // The following app:
+ *   var socket = io("localhost");
+ *   socket.on("messages", function(m){ console.log(m); })
+ *   socket.emit("hello", {});
+ *
+ *   // will create:
+ *   fifoSockets = {
+ *   	localhost: {
+ *   		url: "localhost",
+ *			realSocket: null,
+ *			fifo: [
+ *				[io, ["localhost"]],
+ *				["on", ["messages", function(m){ console.log(m); }]],
+ *				["emit", ["hello", {}]]
+ *			]
+ *   	}
+ *   }
  * ```
  * @type {Object}
  */
@@ -17,7 +31,7 @@ var DEBUG;
  * @param io
  * @returns {{on: function, emit: function, ...}}
  */
-var delayedSocket = function(fifoSocket){
+function delayedSocket(fifoSocket){
 	return ['on', 'off', 'once', 'emit'].reduce(function(acc, method){
 		acc[method] = function(){
 			var realSocket = fifoSocket.realSocket;
@@ -33,7 +47,7 @@ var delayedSocket = function(fifoSocket){
 		};
 		return acc;
 	}, {});
-};
+}
 
 /**
  * Replays calls that were recorded to `fifo`.
