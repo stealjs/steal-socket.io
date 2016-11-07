@@ -1,11 +1,12 @@
-@module steal-socket
+@module steal-socket.io
+
 @parent StealJS.ecosystem
 
 @type {Function}
 
 @description Wrap socket.io for SSR and testing.
 
-The `steal-socket` module exports a function that wraps `socket.io` to serve the following purposes:
+The `steal-socket.io` module exports a function that wraps `socket.io` to serve the following purposes:
 
  * Ignore `socket.io` for [server-side rendering](https://donejs.com/Features.html#section_Server_SideRendered) (SSR).
  * Ignore `socket.io` for [can-zone](http://v3.canjs.com/doc/can-zone.html).
