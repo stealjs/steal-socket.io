@@ -10,7 +10,7 @@
  * This wrapper helps with testing and demoing applications that use `socket.io` for real-time communication.
  * Often some modules that use `socket.io` call it to establish a socket connection immediately. This
  * makes mocking of `socket.io` impossible. The wrapper delays the creation of socket connection till `StealJS`
- * [is done](http://stealjs.com/docs/steal.done.html) loading all the modules (including ones where we can mock
+ * [is done](https://stealjs.github.io/stealjs/docs/steal.done.html) loading all the modules (including ones where we can mock
  * `socket.io` for testing).
  *
  * ```

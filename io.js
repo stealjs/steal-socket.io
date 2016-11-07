@@ -7,13 +7,13 @@
  *
  * @body
  *
- * This wrapper serves a purpose of ignoring socket-io during server-side rendereing (SSR). When usign `StealJS` as
+ * This wrapper serves a purpose of ignoring socket-io during server-side rendereing (SSR). When usign [StealJS](http://stealjs.com/) as
  * a module loader this module maps `socket.io-client/socket.io` to an `@empty` module, and stubs `socket.io` as
  * minimally as possible.
  */
 
 var io = require("socket.io-client/socket.io");
-var ignore = require("./ignore");
+var ignore = require("./ignore-zone");
 var delayIO = require("./delay-io");
 
 // In the server socket.io-client/socket.io is mapped to @empty
