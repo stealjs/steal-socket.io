@@ -1,7 +1,8 @@
-/**
+/*
  * @function steal-socket.ignore-ssr ignore-ssr
  * @parent steal-socket
  * @type {Function}
+ * @hide
  *
  * @description Wrap `socket-io` to be ignored during `SSR`
  *

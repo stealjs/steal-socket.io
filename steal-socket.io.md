@@ -1,6 +1,5 @@
 @module steal-socket
 @parent StealJS.ecosystem
-@group steal-socket.examples
 
 @type {Function}
 
@@ -8,9 +7,9 @@
 
 The `steal-socket` module exports a function that wraps `socket.io` to serve the following purposes:
 
- * Ignore `socket.io` for [server-side rendering](https://donejs.com/Features.html#section_Server_SideRendered) (SSR).
- * Ignore `socket.io` for [can-zone](http://v3.canjs.com/doc/can-zone.html).
- * Delay establishing `socket.io` connection for testing.
+Ignore `socket.io` for [server-side rendering](https://donejs.com/Features.html#section_Server_SideRendered) (SSR).
+Ignore `socket.io` for [can-zone](http://v3.canjs.com/doc/can-zone.html).
+Delay establishing `socket.io` connection for testing.
 
 @signature `stealSocket( url, [options] )`
 
@@ -44,4 +43,56 @@ This wrapper helps with testing and demoing applications that use `socket.io` fo
 Often some modules that use socket.io call it to establish a socket connection immediately. This makes mocking of socket.io impossible.
 
 The wrapper delays the creation of socket connection till StealJS is done loading all the modules (including ones where we can mock socket.io).
+
+### How it works
+
+The `delay-io` wrapper returns `io`-like function that resolves in a `delayedSocket`. The `delayedSocket` is
+a replacement for `io.Socket` and acts as a proxy for it.
+
+Initially the wrapper records all calls to `io` and its socket into a _FIFO storage_, and then, when `StealJS`
+is done with loading all modules, it replays the recorded calls against the real `io` and its socket.
+
+After replaying the wrapper directly proxies all the subsequent calls.
+
+### Usage
+
+Import `steal-socket.io` which includes this wrapper as its part, or directly import `steal-socket.io/delay-io`
+to use just this wrapper.
+
+Lets say we have an application `myApp.js` that uses `socket.io` and tries to establish the connection right during
+module evaluation. We import `steal-socket.io` in our app instead of `socket.io-client/socket.io`:
+```
+var io = require("steal-socket.io");
+
+var messages = [];
+
+var socket = io("localhost");
+io.on("messages", function(m){
+    messages.push(m);
+});
+
+module.exports = {
+    messages: messages
+};
+```
+
+We now create a module `myFixtureSocket.js` that mocks `socket.io` server responses, e.g. using `can-fixture-socket`:
+```
+var io = require("socket.io-client/socket.io");
+var fixtureSocket = require("can-fixture-socket");
+var mockSocket = new fixtureSocket( io );
+mockSocket.on("connect", function(){
+    mockSocket.emit("messages", "some messages");
+});
+```
+
+And then we can test our application like this:
+```
+require("myFixtureSocket");
+var myApp = require("my-app.js");
+
+QUnit.test(function(){
+    assert.equal(myApp.messages.length, 1, "Contains one message received from socket server.");
+});
+```
 

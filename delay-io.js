@@ -1,7 +1,8 @@
-/**
+/*
  * @function steal-socket.delay-io delay-io
  * @parent steal-socket
  * @type {Function}
+ * @hide
  *
  * @description Wrap `socket-io` to delay establishing a connection for testing purposes.
  *

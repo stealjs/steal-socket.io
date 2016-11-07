@@ -1,7 +1,8 @@
-/**
+/*
  * @function steal-socket.ignore-zone ignore-zone
  * @parent steal-socket
  * @type {Function}
+ * @hide
  *
  * @description Wrap `socket-io` when using a `can-zone` module.
  *
