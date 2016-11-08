@@ -43,6 +43,5 @@ QUnit.test("delay-io: test a module with early socket connection ", function(ass
 QUnit.test("emulates uri location", function(){
 	var url = 'http://localhost:3030';
 	var socket = io(url);
-	console.log(socket);
 	QUnit.equal(socket.io.uri, url, "exposes the url at the same location as the Socket.io Manager class");
 });
