@@ -40,7 +40,7 @@ QUnit.test("delay-io: test a module with early socket connection ", function(ass
 	});
 });
 
-QUnit.test("emulates uri storage", function(){
+QUnit.test("emulates uri location", function(){
 	var url = 'http://localhost:3030';
 	var socket = io(url);
 	console.log(socket);
