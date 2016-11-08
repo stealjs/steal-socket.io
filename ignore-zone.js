@@ -1,6 +1,6 @@
 /*
- * @function steal-socket.ignore-zone ignore-zone
- * @parent steal-socket
+ * @function steal-socket.io.ignore-zone ignore-zone
+ * @parent steal-socket.io
  * @type {Function}
  * @hide
  *

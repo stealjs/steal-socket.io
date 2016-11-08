@@ -1,6 +1,6 @@
 /*
  * @function steal-socket.delay-io delay-io
- * @parent steal-socket
+ * @parent steal-socket.io
  * @type {Function}
  * @hide
  *

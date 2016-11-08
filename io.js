@@ -1,6 +1,6 @@
 /*
- * @function steal-socket.ignore-ssr ignore-ssr
- * @parent steal-socket
+ * @function steal-socket.io.ignore-ssr ignore-ssr
+ * @parent steal-socket.io
  * @type {Function}
  * @hide
  *
