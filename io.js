@@ -21,11 +21,14 @@ var delayIO = require("./delay-io");
 // so we'll stub it as minimally as possible.
 if(typeof io !== "function") {
 	var noop = function(){};
-	io = function(){
+	io = function(uri){
 		return {
 			on: noop,
 			once: noop,
-			off: noop
+			off: noop,
+			io: {
+				uri: uri
+			}
 		};
 	};
 } else {
