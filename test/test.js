@@ -4,7 +4,7 @@ var Zone = require("can-zone");
 var myModel = require("./test-model");
 
 // Mock socket.io server to test socket events:
-var socketIO = require("socket.io-client/dist/socket.io");
+var socketIO = require("socket.io-client");
 var fixtureSocket = require("can-fixture-socket");
 var mockedServer = new fixtureSocket.Server( socketIO );
 mockedServer.on("message create", function(){
