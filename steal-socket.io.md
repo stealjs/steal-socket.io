@@ -90,7 +90,7 @@ module.exports = {
 
 We now create a module `myFixtureSocket.js` that mocks `socket.io` server responses, e.g. using [can-fixture-socket](http://v3.canjs.com/doc/can-fixture-socket.html):
 ```
-var io = require("socket.io-client/socket.io");
+var io = require("socket.io-client");
 var fixtureSocket = require("can-fixture-socket");
 var mockSocket = new fixtureSocket( io );
 mockSocket.on("connect", function(){
