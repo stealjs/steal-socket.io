@@ -9,7 +9,7 @@ A small wrapper for `socket.io` that eliminates a lot of configuration and preve
 
 It also helps with testing or demoing your application against fixtures. It can delay establishing socket connection so that we can mock socket server responses for testing. Works well with [can-fixture-socket](http://v3.canjs.com/doc/can-fixture-socket.html).
 
-See full documentation here: [StealJS / Ecosystem / steal-socket.io](https://stealjs.github.io/stealjs/docs/steal-socket.html).
+See full documentation here: [StealJS / Ecosystem / steal-socket.io](https://stealjs.github.io/stealjs/docs/steal-socket.io.html).
 
 ## Install
 
