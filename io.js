@@ -13,7 +13,7 @@
  * minimally as possible.
  */
 
-var io = require("socket.io-client/socket.io");
+var io = require("socket.io-client/dist/socket.io");
 var ignore = require("./ignore-zone");
 var delayIO = require("./delay-io");
 
