@@ -184,11 +184,17 @@ function delayIO(io){
 
 	return function(){
 		var url = arguments[0];
-		var fifoSocket = fifoSockets[url] = {
-			url: url,
-			realSocket: null,
-			fifo: [[io, arguments]]
-		};
+		var params = arguments[1];
+		var urlId = url === '' ? window.location.origin : url;
+		var fifoSocket = fifoSockets[urlId];
+		
+		if(!fifoSocket || params && params.forceNew){
+			fifoSocket = fifoSockets[urlId] = {
+				url: url,
+				realSocket: null,
+				fifo: [[io, arguments]]
+			};
+		}
 
 		return delayedSocket(fifoSocket);
 	};
