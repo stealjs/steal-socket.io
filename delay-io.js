@@ -119,7 +119,7 @@ var DEBUG = false;
  * @returns {{on: function, emit: function, ...}}
  */
 function delayedSocket(fifoSocket){
-	var base = ['on', 'off', 'once', 'emit'].reduce(function(acc, method){
+	var base = ['on', 'off', 'once', 'emit', 'disconnect'].reduce(function(acc, method){
 		acc[method] = function(){
 			var realSocket = fifoSocket.realSocket;
 			var fifo = fifoSocket.fifo;
