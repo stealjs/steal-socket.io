@@ -38,19 +38,13 @@
     "envs": {
       "server-development": {
         "map": {
-          "socket.io-client/socket.io": "@empty"
+          "socket.io-client": "@empty"
         }
       },
       "server-production": {
         "map": {
-          "socket.io-client/socket.io": "@empty"
+          "socket.io-client": "@empty"
         }
-      }
-    },
-    "meta": {
-      "socket.io-client/socket.io": {
-        "format": "global",
-        "exports": "io"
       }
     },
     "npmDependencies": [
