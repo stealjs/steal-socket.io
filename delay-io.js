@@ -78,6 +78,7 @@
  * ```
  */
 
+var steal = require("@steal");
 module.exports = delayIO;
 
 /*
