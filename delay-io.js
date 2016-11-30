@@ -136,7 +136,8 @@ function delayedSocket(fifoSocket){
 	}, {});
 	base.io = {
 		uri: fifoSocket.url
-	}
+	};
+	base.fifoSocket = fifoSocket;
 	return base;
 }
 
@@ -192,6 +193,7 @@ function delayIO(io){
 			fifoSocket = fifoSockets[urlId] = {
 				url: url,
 				realSocket: null,
+				io: io,
 				fifo: [[io, arguments]]
 			};
 		}
