@@ -27,30 +27,24 @@
   "devDependencies": {
     "can-fixture-socket": "^0.5.7",
     "can-zone": "^0.6.0",
-    "steal": "^0.11.1",
+    "steal": "^0.16.43",
     "steal-qunit": "^0.1.1",
     "testee": "^0.2.1"
   },
   "dependencies": {
-    "socket.io-client": "^1.7.0"
+    "socket.io-client": "^1.7.1"
   },
   "system": {
     "envs": {
       "server-development": {
         "map": {
-          "socket.io-client/socket.io": "@empty"
+          "socket.io-client": "@empty"
         }
       },
       "server-production": {
         "map": {
-          "socket.io-client/socket.io": "@empty"
+          "socket.io-client": "@empty"
         }
-      }
-    },
-    "meta": {
-      "socket.io-client/socket.io": {
-        "format": "global",
-        "exports": "io"
       }
     },
     "npmDependencies": [
