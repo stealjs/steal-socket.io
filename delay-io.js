@@ -1,3 +1,5 @@
+var DefineMap = require('can-define/map/map');
+
 /*
  * @function steal-socket.delay-io delay-io
  * @parent steal-socket.io
@@ -113,14 +115,40 @@ var DEBUG = false;
  * @type {Object}
  */
 
+var DelayedSocket = DefineMap.extend('DelayedSocket', {
+	seal: false
+}, {
+	fifoSocket: 'any',
+	realSocket: {
+		get: function () {
+			console.log('realSocket getter');
+			return this.fifoSocket.realSocket;
+		}
+	},
+	io: 'any',
+	connected: {
+		get: function () {
+			console.log('connected getter');
+			var realSocket = this.realSocket;
+			return !!realSocket && realSocket.connected;
+		}
+	},
+	disconnected: {
+		get: function () {
+			var realSocket = this.realSocket;
+			return !!realSocket && realSocket.disconnected;
+		}
+	}
+});
+
 /*
  * Delayed socket - a proxy for socket method calls, so that we can record early calls to `fifo` and replay them after.
  * @param io
  * @returns {{on: function, emit: function, ...}}
  */
 function delayedSocket(fifoSocket){
-	var base = ['on', 'off', 'once', 'emit', 'disconnect'].reduce(function(acc, method){
-		acc[method] = function(){
+	var base = ['on', 'off', 'once', 'emit', 'disconnect'].reduce(function(socketMethods, method){
+		socketMethods[method] = function(){
 			var realSocket = fifoSocket.realSocket;
 			var fifo = fifoSocket.fifo;
 			var url = fifoSocket.url;
@@ -132,13 +160,13 @@ function delayedSocket(fifoSocket){
 				fifo.push([method, arguments]);
 			}
 		};
-		return acc;
+		return socketMethods;
 	}, {});
 	base.io = {
 		uri: fifoSocket.url
 	};
 	base.fifoSocket = fifoSocket;
-	return base;
+	return new DelayedSocket(base);
 }
 
 /*
@@ -152,18 +180,16 @@ function replay(fifoSockets){
 		Object.keys(fifoSockets).forEach(function(url){
 			replayFifoSocket(fifoSockets[url]);
 		});
-	}
+	};
 }
 
 function replayFifoSocket(fifoSocket){
 	var	url = fifoSocket.url,
-		fifo = fifoSocket.fifo,
-		first = fifo.shift(),
-		io = first[0],
-		args = first[1],
+		io = fifoSocket.io,
+		args = fifoSocket.args,
 		realSocket = fifoSocket.realSocket = io.apply(this, args);
 
-	fifo.forEach(function(pair){
+	fifoSocket.fifo.forEach(function(pair){
 		var method = pair[0],
 			args = pair[1];
 		debug('delay-io("' + url + '"): replay ' + method + '("' + args[0] + '", ...)');
@@ -178,26 +204,26 @@ function debug(msg){
 	}
 }
 
-function delayIO(io){
-	var fifoSockets = {};
+var fifoSockets = {};
 
+function delayIO(io){
 	steal.done().then(replay(fifoSockets));
 
-	return function(){
-		var url = arguments[0];
-		var params = arguments[1];
+	return function (url, options) {	
 		var urlId = url === '' ? window.location.origin : url;
 		var fifoSocket = fifoSockets[urlId];
 		
-		if(!fifoSocket || params && params.forceNew){
+		if(!fifoSocket || options && options.forceNew){
 			fifoSocket = fifoSockets[urlId] = {
 				url: url,
 				realSocket: null,
 				io: io,
-				fifo: [[io, arguments]]
+				args: arguments,
+				fifo: []
 			};
 		}
 
 		return delayedSocket(fifoSocket);
 	};
 }
+
