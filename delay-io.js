@@ -16,12 +16,12 @@
  *
  * ```
  * var delayIO = require("steal-socket.io/delay-io");
- * var socketIO = require("socket.io-client/socket.io");
+ * var socketIO = require("socket.io-client/dist/socket.io");
  * var io  = delayIO( socketIO );
  *
  * io("localhost");
  * ```
- *   @param {module} io The SocketIO client module. Usually, it is `socket.io-client/socket.io`.
+ *   @param {module} io The SocketIO client module. Usually, it is `socket.io-client/dist/socket.io`.
  *
  * @body
  *
@@ -41,7 +41,7 @@
  * to use just this wrapper.
  *
  * Lets say we have an application `myApp.js` that uses `socket.io` and tries to establish the connection right during
- * module evaluation. We import `steal-socket.io` in our app instead of `socket.io-client/socket.io`:
+ * module evaluation. We import `steal-socket.io` in our app instead of `socket.io-client/dist/socket.io`:
  * ```
  * var io = require("steal-socket.io");
  *
@@ -59,7 +59,7 @@
  *
  * We now create a module `myFixtureSocket.js` that mocks `socket.io` server responses, e.g. using `can-fixture-socket`:
  * ```
- * var io = require("socket.io-client/socket.io");
+ * var io = require("socket.io-client/dist/socket.io");
  * var fixtureSocket = require("can-fixture-socket");
  * var mockSocket = new fixtureSocket( io );
  * mockSocket.on("connect", function(){
