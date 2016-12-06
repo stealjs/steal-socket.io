@@ -5,7 +5,7 @@ var myModel = require("./test-model");
 var socketList = require("../delay-io").sockets;
 
 // Mock socket.io server to test socket events:
-var sio = require("socket.io-client");
+var sio = require("socket.io-client/dist/socket.io");
 var fixtureSocket = require("can-fixture-socket");
 var mockedServer = new fixtureSocket.Server( sio );
 mockedServer.on("message create", function(){
