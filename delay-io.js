@@ -121,14 +121,12 @@ var DelayedSocket = DefineMap.extend('DelayedSocket', {
 	fifoSocket: 'any',
 	realSocket: {
 		get: function () {
-			console.log('realSocket getter');
 			return this.fifoSocket.realSocket;
 		}
 	},
 	io: 'any',
 	connected: {
 		get: function () {
-			console.log('connected getter');
 			var realSocket = this.realSocket;
 			return !!realSocket && realSocket.connected;
 		}
