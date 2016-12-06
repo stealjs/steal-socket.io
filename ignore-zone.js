@@ -15,12 +15,12 @@
  *
  * ```
  * var ignoreZone = require("steal-socket.io/ignore-zone");
- * var socketIO = require("socket.io-client/socket.io");
+ * var socketIO = require("socket.io-client/dist/socket.io");
  * var io  = ignoreZone( socketIO );
  *
  * io("localhost");
  * ```
- *   @param {module} io The SocketIO client module. Usually, it is `socket.io-client/socket.io`.
+ *   @param {module} io The SocketIO client module. Usually, it is `socket.io-client/dist/socket.io`.
  */
 
 module.exports = function(io){

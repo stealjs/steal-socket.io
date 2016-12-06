@@ -36,7 +36,7 @@ var socket = io("localhost", {transports: ["websocket"]});
 If your application uses real-time communication with `socket.io` and your server supports SSR then its a good idea
 to ignore `socket.io` module during SSR completely.
 
-The `steal-socket.io` module maps `socket.io-client/socket.io` to an `@empty` module, and stubs `socket.io` as minimally
+The `steal-socket.io` module maps `socket.io-client/dist/socket.io` to an `@empty` module, and stubs `socket.io` as minimally
 as possible.
 
 ## Ignore can-zone
@@ -72,7 +72,7 @@ Import `steal-socket.io` which includes this wrapper as its part, or directly im
 to use just this wrapper.
 
 Lets say we have an application `myApp.js` that uses `socket.io` and tries to establish the connection right during
-module evaluation. We import `steal-socket.io` in our app instead of `socket.io-client/socket.io`:
+module evaluation. We import `steal-socket.io` in our app instead of `socket.io-client/dist/socket.io`:
 ```
 var io = require("steal-socket.io");
 
@@ -90,7 +90,7 @@ module.exports = {
 
 We now create a module `myFixtureSocket.js` that mocks `socket.io` server responses, e.g. using [can-fixture-socket](http://v3.canjs.com/doc/can-fixture-socket.html):
 ```
-var io = require("socket.io-client");
+var io = require("socket.io-client/dist/socket.io");
 var fixtureSocket = require("can-fixture-socket");
 var mockSocket = new fixtureSocket( io );
 mockSocket.on("connect", function(){
