@@ -33,6 +33,17 @@ QUnit.test("works with can-zone", function(){
 	QUnit.stop();
 });
 
+QUnit.test("multiple Steal sockets use the same fifoSocket object", function(assert){
+	var stealSocket1 = io('', {
+		transports: ['websocket']
+	});
+	var stealSocket2 = io('', {
+		transports: ['websocket']
+	});
+
+	assert.equal(stealSocket1.fifoSocket, stealSocket2.fifoSocket, 'fifoSockets are the same object');
+});
+
 QUnit.test("each socket's properties match a real socket", function(assert){
 	var socketioSocket = sio('', {
 		transports: ['websocket']
