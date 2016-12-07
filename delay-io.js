@@ -137,6 +137,12 @@ var DelayedSocket = DefineMap.extend('DelayedSocket', {
 			var realSocket = this.realSocket;
 			return !!realSocket && realSocket.disconnected;
 		}
+	},
+	disconnect: function() {
+		var realSocket = this.realSocket;
+		if (realSocket) {
+			return realSocket.disconnect();
+		}
 	}
 });
 
@@ -146,7 +152,7 @@ var DelayedSocket = DefineMap.extend('DelayedSocket', {
  * @returns {{on: function, emit: function, ...}}
  */
 function delayedSocket(fifoSocket){
-	var base = ['on', 'off', 'once', 'emit', 'disconnect'].reduce(function(socketMethods, method){
+	var base = ['on', 'off', 'once', 'emit'].reduce(function(socketMethods, method){
 		socketMethods[method] = function(){
 			var realSocket = fifoSocket.realSocket;
 			var fifo = fifoSocket.fifo;

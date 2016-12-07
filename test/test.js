@@ -6,11 +6,11 @@ var socketList = require("../delay-io").sockets;
 
 // Mock socket.io server to test socket events:
 var sio = require("socket.io-client/dist/socket.io");
-var fixtureSocket = require("can-fixture-socket");
-var mockedServer = new fixtureSocket.Server( sio );
-mockedServer.on("message create", function(){
-	mockedServer.emit("message created", {id: 123});
-});
+// var fixtureSocket = require("can-fixture-socket");
+// var mockedServer = new fixtureSocket.Server( sio );
+// mockedServer.on("message create", function(){
+// 	mockedServer.emit("message created", {id: 123});
+// });
 
 QUnit.module("basics");
 
@@ -62,6 +62,21 @@ QUnit.test("each socket's properties match a real socket", function(assert){
 	assert.equal(stealSocket.connected, false, 'the stealSocket.connected property was correctly proxied to the realSocket.');
 	stealSocket.fifoSocket.realSocket = {connected: true};
 	assert.equal(stealSocket.connected, true, 'the stealSocket.connected property was correctly proxied to the realSocket.');
+});
+
+QUnit.test("Support calling socket.disconnect()", function (assert) {
+	var done = assert.async();
+	var stealSocket = io('', {
+		transports: ['websocket']
+	});
+	assert.equal(typeof stealSocket.disconnect, 'function', 'Steal sockets have a disconnect function.');
+
+	setTimeout(function () {
+		stealSocket.disconnect();
+		assert.equal(stealSocket.connected, false, 'socket.connected was false after disconnect().');
+		assert.equal(stealSocket.disconnected, true, 'socket.disconnected was true after disconnect().');
+		done();
+	}, 4000);
 });
 
 QUnit.test("delay-io: test a module with early socket connection ", function(assert){
