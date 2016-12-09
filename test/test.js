@@ -32,6 +32,31 @@ QUnit.test("works with can-zone", function(){
 	QUnit.stop();
 });
 
+QUnit.test("multiple Steal sockets use the same fifoSocket object", function(assert){
+	var stealSocket1 = io('', {
+		transports: ['websocket']
+	});
+	var stealSocket2 = io('', {
+		transports: ['websocket']
+	});
+
+	assert.equal(stealSocket1.fifoSocket, stealSocket2.fifoSocket, 'fifoSockets are the same object');
+});
+
+QUnit.test("Support calling socket.disconnect()", function (assert) {
+	var stealSocket = io('', {
+		transports: ['websocket']
+	});
+	assert.equal(stealSocket.connected, true, 'socket.connected is true.');
+	assert.equal(stealSocket.disconnected, false, 'socket.disconnected is false.');
+
+	assert.equal(typeof stealSocket.disconnect, 'function', 'Steal sockets have a disconnect function.');
+
+	stealSocket.disconnect();
+	assert.equal(stealSocket.connected, false, 'socket.connected becomes false after disconnect().');
+	assert.equal(stealSocket.disconnected, true, 'socket.disconnected becomes true after disconnect().');
+});
+
 QUnit.test("delay-io: test a module with early socket connection ", function(assert){
 	var done = assert.async();
 	myModel.then(function(data){
