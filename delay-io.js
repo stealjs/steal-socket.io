@@ -137,8 +137,8 @@ var DelayedSocketBase = {
  * @returns {{on: function, emit: function, ...}}
  */
 function delayedSocket(fifoSocket){
-	var delayedSocket = ['on', 'off', 'once', 'emit'].reduce(function(socketMethods, method){
-		socketMethods[method] = function(){
+	var delayedSocket = ['on', 'off', 'once', 'emit'].reduce(function(acc, method){
+		acc[method] = function(){
 			var realSocket = fifoSocket.realSocket;
 			var fifo = fifoSocket.fifo;
 			var url = fifoSocket.url;
@@ -154,7 +154,7 @@ function delayedSocket(fifoSocket){
 				fifo.push([method, arguments]);
 			}
 		};
-		return socketMethods;
+		return acc;
 	}, DelayedSocketBase);
 
 	delayedSocket.io = {
@@ -219,7 +219,6 @@ function delayIO(io){
 				args: arguments,
 				fifo: []
 			};
-			//if (fifoSocket.realSocket) fifoSocket.realSocket.__test = true;
 		}
 
 		return delayedSocket(fifoSocket);

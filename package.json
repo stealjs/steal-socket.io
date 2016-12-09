@@ -55,7 +55,6 @@
     },
     "npmDependencies": [
       "socket.io-client",
-      "can-define",
       "steal-qunit",
       "can-zone",
       "can-fixture-socket"
