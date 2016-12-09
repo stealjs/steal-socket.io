@@ -123,13 +123,26 @@ var DelayedSocketBase = {
 	get disconnected () {
 		return !this.connected;
 	},
-	disconnect: function() {
-		var realSocket = this.fifoSocket.realSocket;
-		if (realSocket && realSocket.disconnect) {
-			return realSocket.disconnect();
-		}
+	connect: function () {
+		return callRealSocketMethod.call(this, 'connect');
+	},
+	open: function () {
+		return callRealSocketMethod.call(this, 'open');
+	},
+	disconnect: function () {
+		return callRealSocketMethod.call(this, 'disconnect');
+	},
+	close: function () {
+		return callRealSocketMethod.call(this, 'close');
 	}
 };
+
+function callRealSocketMethod (method) {
+	var realSocket = this.fifoSocket.realSocket;
+	if (realSocket && realSocket[method]) {
+		return realSocket[method]();
+	}
+}
 
 /*
  * Delayed socket - a proxy for socket method calls, so that we can record early calls to `fifo` and replay them after.

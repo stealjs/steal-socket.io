@@ -43,7 +43,7 @@ QUnit.test("multiple Steal sockets use the same fifoSocket object", function(ass
 	assert.equal(stealSocket1.fifoSocket, stealSocket2.fifoSocket, 'fifoSockets are the same object');
 });
 
-QUnit.test("Support calling socket.disconnect()", function (assert) {
+QUnit.test("Support socket.connect() & socket.disconnect()", function (assert) {
 	var stealSocket = io('', {
 		transports: ['websocket']
 	});
@@ -51,10 +51,14 @@ QUnit.test("Support calling socket.disconnect()", function (assert) {
 	assert.equal(stealSocket.disconnected, false, 'socket.disconnected is false.');
 
 	assert.equal(typeof stealSocket.disconnect, 'function', 'Steal sockets have a disconnect function.');
-
 	stealSocket.disconnect();
 	assert.equal(stealSocket.connected, false, 'socket.connected becomes false after disconnect().');
 	assert.equal(stealSocket.disconnected, true, 'socket.disconnected becomes true after disconnect().');
+
+	assert.equal(typeof stealSocket.connect, 'function', 'Steal sockets have a disconnect function.');
+	stealSocket.connect();
+	assert.equal(stealSocket.connected, true, 'socket.connected becomes true after connect().');
+	assert.equal(stealSocket.disconnected, false, 'socket.disconnected becomes false after connect().');
 });
 
 QUnit.test("delay-io: test a module with early socket connection ", function(assert){
