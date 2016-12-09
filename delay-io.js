@@ -1,5 +1,3 @@
-var DefineMap = require('can-define/map/map');
-
 /*
  * @function steal-socket.delay-io delay-io
  * @parent steal-socket.io
@@ -116,35 +114,22 @@ var DEBUG = false;
  * @type {Object}
  */
 
-var DelayedSocket = DefineMap.extend('DelayedSocket', {
-	seal: false
-}, {
-	fifoSocket: 'any',
-	realSocket: {
-		get: function () {
-			return this.fifoSocket.realSocket;
-		}
+var DelayedSocketBase = {
+	__delayedSocket: true,
+	get connected () {
+		var realSocket = this.fifoSocket.realSocket;
+		return !!realSocket && realSocket.connected;
 	},
-	io: 'any',
-	connected: {
-		get: function () {
-			var realSocket = this.realSocket;
-			return !!realSocket && realSocket.connected;
-		}
-	},
-	disconnected: {
-		get: function () {
-			var realSocket = this.realSocket;
-			return !!realSocket && realSocket.disconnected;
-		}
+	get disconnected () {
+		return !this.connected;
 	},
 	disconnect: function() {
-		var realSocket = this.realSocket;
-		if (realSocket) {
+		var realSocket = this.fifoSocket.realSocket;
+		if (realSocket && realSocket.disconnect) {
 			return realSocket.disconnect();
 		}
 	}
-});
+};
 
 /*
  * Delayed socket - a proxy for socket method calls, so that we can record early calls to `fifo` and replay them after.
@@ -152,26 +137,32 @@ var DelayedSocket = DefineMap.extend('DelayedSocket', {
  * @returns {{on: function, emit: function, ...}}
  */
 function delayedSocket(fifoSocket){
-	var base = ['on', 'off', 'once', 'emit'].reduce(function(socketMethods, method){
+	var delayedSocket = ['on', 'off', 'once', 'emit'].reduce(function(socketMethods, method){
 		socketMethods[method] = function(){
 			var realSocket = fifoSocket.realSocket;
 			var fifo = fifoSocket.fifo;
 			var url = fifoSocket.url;
 			if (realSocket){
 				debug('delay-io("' + url + '"): realSocket ' + method);
-				realSocket[method].apply(realSocket, arguments);
+				if (!realSocket[method]){
+					console.warn('steal-socket.io: method ' + method + ' is undefined for realSocket');
+				} else {
+					realSocket[method].apply(realSocket, arguments);
+				}
 			} else {
 				debug('delay-io("' + url + '"): record ' + method + '("' + arguments[0] + '", ...)');
 				fifo.push([method, arguments]);
 			}
 		};
 		return socketMethods;
-	}, {});
-	base.io = {
+	}, DelayedSocketBase);
+
+	delayedSocket.io = {
 		uri: fifoSocket.url
 	};
-	base.fifoSocket = fifoSocket;
-	return new DelayedSocket(base);
+	delayedSocket.fifoSocket = fifoSocket;
+
+	return delayedSocket;
 }
 
 /*
@@ -179,12 +170,14 @@ function delayedSocket(fifoSocket){
  * @param fifo
  * @returns {Function}
  */
+var hasReplayed = false;
 function replay(fifoSockets){
 	return function(){
 		debug('+++++ delay-io: replay!');
 		Object.keys(fifoSockets).forEach(function(url){
 			replayFifoSocket(fifoSockets[url]);
 		});
+		hasReplayed = true;
 	};
 }
 
@@ -221,11 +214,12 @@ function delayIO(io){
 		if(!fifoSocket || options && options.forceNew){
 			fifoSocket = fifoSockets[urlId] = {
 				url: url,
-				realSocket: null,
+				realSocket: hasReplayed ? io.apply(this, arguments) : null,
 				io: io,
 				args: arguments,
 				fifo: []
 			};
+			//if (fifoSocket.realSocket) fifoSocket.realSocket.__test = true;
 		}
 
 		return delayedSocket(fifoSocket);

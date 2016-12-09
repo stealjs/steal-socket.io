@@ -2,15 +2,15 @@ var io = require("steal-socket.io");
 var QUnit = require("steal-qunit");
 var Zone = require("can-zone");
 var myModel = require("./test-model");
-var socketList = require("../delay-io").sockets;
+//var socketList = require("../delay-io").sockets;
 
 // Mock socket.io server to test socket events:
 var sio = require("socket.io-client/dist/socket.io");
-// var fixtureSocket = require("can-fixture-socket");
-// var mockedServer = new fixtureSocket.Server( sio );
-// mockedServer.on("message create", function(){
-// 	mockedServer.emit("message created", {id: 123});
-// });
+var fixtureSocket = require("can-fixture-socket");
+var mockedServer = new fixtureSocket.Server( sio );
+mockedServer.on("message create", function(){
+	mockedServer.emit("message created", {id: 123});
+});
 
 QUnit.module("basics");
 
@@ -45,17 +45,17 @@ QUnit.test("multiple Steal sockets use the same fifoSocket object", function(ass
 });
 
 QUnit.test("each socket's properties match a real socket", function(assert){
-	var socketioSocket = sio('', {
-		transports: ['websocket']
-	});
+	//var socketioSocket = sio('', {
+	//	transports: ['websocket']
+	//});
 	var stealSocket = io('', {
 		transports: ['websocket']
 	});
 
-	assert.equal(typeof socketioSocket.connected, 'boolean', 'the socket.io-client socket has a `connected` property.');
+	//assert.equal(typeof socketioSocket.connected, 'boolean', 'the socket.io-client socket has a `connected` property.');
 	assert.equal(typeof stealSocket.connected, 'boolean', 'the steal-socket.io socket has a `connected` property.');
 
-	assert.equal(typeof socketioSocket.disconnected, 'boolean', 'the socket.io-client socket has a `disconnected` property.');
+	//assert.equal(typeof socketioSocket.disconnected, 'boolean', 'the socket.io-client socket has a `disconnected` property.');
 	assert.equal(typeof stealSocket.disconnected, 'boolean', 'the steal-socket.io socket has a `disconnected` property.');
 
 	stealSocket.fifoSocket.realSocket = {connected: false};
@@ -65,18 +65,15 @@ QUnit.test("each socket's properties match a real socket", function(assert){
 });
 
 QUnit.test("Support calling socket.disconnect()", function (assert) {
-	var done = assert.async();
-	var stealSocket = io('', {
+	//TODO: if we call `io('')` then this tests conflicts with the previous one.
+	var stealSocket = io('test', {
 		transports: ['websocket']
 	});
 	assert.equal(typeof stealSocket.disconnect, 'function', 'Steal sockets have a disconnect function.');
 
-	setTimeout(function () {
-		stealSocket.disconnect();
-		assert.equal(stealSocket.connected, false, 'socket.connected was false after disconnect().');
-		assert.equal(stealSocket.disconnected, true, 'socket.disconnected was true after disconnect().');
-		done();
-	}, 4000);
+	stealSocket.disconnect();
+	assert.equal(stealSocket.connected, false, 'socket.connected was false after disconnect().');
+	assert.equal(stealSocket.disconnected, true, 'socket.disconnected was true after disconnect().');
 });
 
 QUnit.test("delay-io: test a module with early socket connection ", function(assert){
