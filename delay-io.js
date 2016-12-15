@@ -138,7 +138,7 @@ var DelayedSocketBase = {
 	__run: function(fnName, args) {
 		var realSocket = this.fifoSocket.realSocket;
 		if (realSocket && realSocket[fnName]) {
-			return realSocket[fnName]();
+			return realSocket[fnName].apply(realSocket, args);
 		}
 	}
 };
