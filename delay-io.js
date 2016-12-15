@@ -114,30 +114,37 @@ var DEBUG = false;
  * @type {Object}
  */
 
-var DelayedSocketBase = {
-	__delayedSocket: true,
-	get connected () {
-		var realSocket = this.fifoSocket.realSocket;
-		return !!realSocket && realSocket.connected;
-	},
-	get disconnected () {
-		return !this.connected;
-	},
-	disconnect: function() {
-		var realSocket = this.fifoSocket.realSocket;
-		if (realSocket && realSocket.disconnect) {
-			return realSocket.disconnect();
-		}
-	}
-};
-
 /*
  * Delayed socket - a proxy for socket method calls, so that we can record early calls to `fifo` and replay them after.
  * @param io
  * @returns {{on: function, emit: function, ...}}
  */
 function delayedSocket(fifoSocket){
-	var delayedSocket = ['on', 'off', 'once', 'emit'].reduce(function(acc, method){
+	var delayedSocketBase = {
+		__delayedSocket: true,
+		get connected () {
+			var realSocket = this.fifoSocket.realSocket;
+			return !!realSocket && realSocket.connected;
+		},
+		get disconnected () {
+			return !this.connected;
+		}
+	};
+
+	var methods = [
+		'on',
+		'off',
+		'once',
+		'emit',
+		'removeListener',
+		'addListener',
+		'open',
+		'connect',
+		'close',
+		'disconnect'
+	];
+
+	var delayedSocket = methods.reduce(function(acc, method){
 		acc[method] = function(){
 			var realSocket = fifoSocket.realSocket;
 			var fifo = fifoSocket.fifo;
@@ -155,10 +162,18 @@ function delayedSocket(fifoSocket){
 			}
 		};
 		return acc;
-	}, DelayedSocketBase);
+	}, delayedSocketBase);
 
 	delayedSocket.io = {
-		uri: fifoSocket.url
+		uri: fifoSocket.url,
+		engine: ['on', 'off'].reduce(function (acc, method) {
+			acc[method] = function (event, handler) {
+				if (fifoSocket.realSocket) {
+					return fifoSocket.realSocket.io.engine[method](event, handler);
+				}
+			};
+			return acc;
+		}, {})
 	};
 	delayedSocket.fifoSocket = fifoSocket;
 
@@ -224,4 +239,3 @@ function delayIO(io){
 		return delayedSocket(fifoSocket);
 	};
 }
-
