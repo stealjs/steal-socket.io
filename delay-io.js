@@ -123,26 +123,25 @@ var DelayedSocketBase = {
 	get disconnected () {
 		return !this.connected;
 	},
-	connect: function () {
-		return callRealSocketMethod.call(this, 'connect');
+	open: function() {
+		this.__run('open', arguments);
 	},
-	open: function () {
-		return callRealSocketMethod.call(this, 'open');
+	connect: function() {
+		this.__run('connect', arguments);
 	},
-	disconnect: function () {
-		return callRealSocketMethod.call(this, 'disconnect');
+	close: function() {
+		this.__run('close', arguments);
 	},
-	close: function () {
-		return callRealSocketMethod.call(this, 'close');
+	disconnect: function() {
+		this.__run('disconnect', arguments);
+	},
+	__run: function(fnName, args) {
+		var realSocket = this.fifoSocket.realSocket;
+		if (realSocket && realSocket[fnName]) {
+			return realSocket[fnName].apply(this, args);
+		}
 	}
 };
-
-function callRealSocketMethod (method) {
-	var realSocket = this.fifoSocket.realSocket;
-	if (realSocket && realSocket[method]) {
-		return realSocket[method]();
-	}
-}
 
 /*
  * Delayed socket - a proxy for socket method calls, so that we can record early calls to `fifo` and replay them after.
@@ -150,7 +149,7 @@ function callRealSocketMethod (method) {
  * @returns {{on: function, emit: function, ...}}
  */
 function delayedSocket(fifoSocket){
-	var delayedSocket = ['on', 'off', 'once', 'emit'].reduce(function(acc, method){
+	var delayedSocket = ['on', 'off', 'once', 'emit', 'removeListener', 'addListener'].reduce(function(acc, method){
 		acc[method] = function(){
 			var realSocket = fifoSocket.realSocket;
 			var fifo = fifoSocket.fifo;
@@ -171,7 +170,14 @@ function delayedSocket(fifoSocket){
 	}, DelayedSocketBase);
 
 	delayedSocket.io = {
-		uri: fifoSocket.url
+		uri: fifoSocket.url,
+		engine: {
+			on: function(event, handler){
+				if (fifoSocket.realSocket) {
+					return fifoSocket.realSocket.io.engine.on(event, handler);
+				}
+			}
+		}
 	};
 	delayedSocket.fifoSocket = fifoSocket;
 
@@ -237,4 +243,3 @@ function delayIO(io){
 		return delayedSocket(fifoSocket);
 	};
 }
-
