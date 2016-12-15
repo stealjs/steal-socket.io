@@ -41,28 +41,31 @@ QUnit.test("multiple Steal sockets use the same fifoSocket object", function(ass
 	});
 
 	assert.equal(stealSocket1.fifoSocket, stealSocket2.fifoSocket, 'fifoSockets are the same object');
+	assert.ok(stealSocket1 !== stealSocket2, 'delayedSockets are not the same object');
 });
 
 QUnit.test("Support socket.io methods and attributes", function (assert) {
 	var stealSocket = io('', {
 		transports: ['websocket']
 	});
-	assert.equal(stealSocket.connected, true, 'socket.connected is true.');
-	assert.equal(stealSocket.disconnected, false, 'socket.disconnected is false.');
 
 	assert.equal(typeof stealSocket.addListener, 'function', 'Steal sockets have an addListener function.');
 	assert.equal(typeof stealSocket.removeListener, 'function', 'Steal sockets have a removeListener function.');
-	
-	assert.equal(typeof stealSocket.io.engine, 'object', 'Steal sockets have an engine object.');
-
+	assert.equal(typeof stealSocket.connect, 'function', 'Steal sockets have a disconnect function.');
+	assert.equal(typeof stealSocket.open, 'function', 'Steal sockets have an open function.');
 	assert.equal(typeof stealSocket.disconnect, 'function', 'Steal sockets have a disconnect function.');
-	assert.equal(typeof stealSocket.close, 'function', 'Steal sockets have a close function.');
+	assert.equal(typeof stealSocket.close, 'function', 'Steal sockets have a close function.');	
+	assert.equal(typeof stealSocket.io.engine, 'object', 'Steal sockets have an engine object.');
+	assert.equal(typeof stealSocket.io.engine.on, 'function', 'Steal sockets have an engine.on function.');
+	assert.equal(typeof stealSocket.io.engine.off, 'function', 'Steal sockets have an engine.off function.');
+
+	assert.equal(stealSocket.connected, true, 'socket.connected is true.');
+	assert.equal(stealSocket.disconnected, false, 'socket.disconnected is false.');
+
 	stealSocket.disconnect();
 	assert.equal(stealSocket.connected, false, 'socket.connected becomes false after disconnect().');
 	assert.equal(stealSocket.disconnected, true, 'socket.disconnected becomes true after disconnect().');
 
-	assert.equal(typeof stealSocket.connect, 'function', 'Steal sockets have a disconnect function.');
-	assert.equal(typeof stealSocket.open, 'function', 'Steal sockets have an open function.');
 	stealSocket.connect();
 	assert.equal(stealSocket.connected, true, 'socket.connected becomes true after connect().');
 	assert.equal(stealSocket.disconnected, false, 'socket.disconnected becomes false after connect().');
