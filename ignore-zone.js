@@ -25,11 +25,19 @@
 
 module.exports = function(io){
 	return function(){
-		if(typeof CanZone === "function" &&
-		   typeof CanZone.ignore === "function") {
-			return CanZone.ignore(io).apply(this, arguments);
+		var Zone = globalZone();
+
+		if(Zone) {
+			return Zone.ignore(io).apply(this, arguments);
 		}
 		//return io.apply(this, arguments);
 		return io.apply(this, arguments);
 	}
 };
+
+function globalZone(){
+	return (typeof CanZone === "function" &&
+			typeof CanZone.ignore === "function" && CanZone) ||
+		(typeof Zone === "function" &&
+		 typeof Zone.ignore === "function" && Zone);
+}
