@@ -1,6 +1,6 @@
 {
   "name": "steal-socket.io",
-  "version": "4.0.8",
+  "version": "4.0.9",
   "description": "",
   "main": "io.js",
   "scripts": {
