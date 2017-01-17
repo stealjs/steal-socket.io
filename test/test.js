@@ -32,6 +32,28 @@ QUnit.test("works with can-zone", function(){
 	QUnit.stop();
 });
 
+QUnit.test("works with can-zone using Zone global", function(){
+	new Zone().run(function(){
+		setTimeout(function(){
+			window.Zone = window.CanZone;
+			delete window.CanZone;
+
+			var socket = io("http://chat.donejs.com");
+
+			window.CanZone = window.Zone;
+			delete window.Zone;
+
+			QUnit.equal(typeof socket, "object", "got our socket back");
+		});
+	}).then(function(){
+		QUnit.ok("it completed");
+	})
+	.then(QUnit.start);
+
+	QUnit.stop();
+
+});
+
 QUnit.test("multiple Steal sockets use the same fifoSocket object", function(assert){
 	var stealSocket1 = io('', {
 		transports: ['websocket']
@@ -54,7 +76,7 @@ QUnit.test("Support socket.io methods and attributes", function (assert) {
 	assert.equal(typeof stealSocket.connect, 'function', 'Steal sockets have a disconnect function.');
 	assert.equal(typeof stealSocket.open, 'function', 'Steal sockets have an open function.');
 	assert.equal(typeof stealSocket.disconnect, 'function', 'Steal sockets have a disconnect function.');
-	assert.equal(typeof stealSocket.close, 'function', 'Steal sockets have a close function.');	
+	assert.equal(typeof stealSocket.close, 'function', 'Steal sockets have a close function.');
 	assert.equal(typeof stealSocket.io.engine, 'object', 'Steal sockets have an engine object.');
 	assert.equal(typeof stealSocket.io.engine.on, 'function', 'Steal sockets have an engine.on function.');
 	assert.equal(typeof stealSocket.io.engine.off, 'function', 'Steal sockets have an engine.off function.');

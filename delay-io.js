@@ -79,6 +79,7 @@
  */
 
 var steal = require("@steal");
+var ignore = require("./ignore-zone");
 module.exports = delayIO;
 
 /*
@@ -198,7 +199,7 @@ function replay(fifoSockets){
 
 function replayFifoSocket(fifoSocket){
 	var	url = fifoSocket.url,
-		io = fifoSocket.io,
+		io = ignore(fifoSocket.io),
 		args = fifoSocket.args,
 		realSocket = fifoSocket.realSocket = io.apply(this, args);
 
@@ -222,10 +223,10 @@ var fifoSockets = {};
 function delayIO(io){
 	steal.done().then(replay(fifoSockets));
 
-	return function (url, options) {	
+	return function (url, options) {
 		var urlId = url === '' ? window.location.origin : url;
 		var fifoSocket = fifoSockets[urlId];
-		
+
 		if(!fifoSocket || options && options.forceNew){
 			fifoSocket = fifoSockets[urlId] = {
 				url: url,
