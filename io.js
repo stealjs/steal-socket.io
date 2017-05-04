@@ -13,6 +13,7 @@
  * minimally as possible.
  */
 
+var steal = require("@steal");
 var io = require("socket.io-client/dist/socket.io");
 var ignore = require("./ignore-zone");
 var delayIO = require("./delay-io");
@@ -32,7 +33,11 @@ if(typeof io !== "function") {
 		};
 	};
 } else {
-	io = ignore( delayIO( io ) );
+	var delayEnabled = steal.config('socket.io-delay');
+	if (delayEnabled || delayEnabled === undefined) {
+		io = delayIO(io);
+	}
+	io = ignore(io);
 }
 
 module.exports = io;
