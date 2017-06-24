@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/stealjs/steal-socket.io",
   "dependencies": {
-    "socket.io-client": "^1.7.1"
+    "socket.io-client": "^2.0.0"
   },
   "devDependencies": {
     "can-fixture-socket": "^0.5.11",
