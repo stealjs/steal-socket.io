@@ -26,6 +26,7 @@ if(typeof io !== "function") {
 			on: noop,
 			once: noop,
 			off: noop,
+			emit: noop,
 			io: {
 				uri: uri
 			}
